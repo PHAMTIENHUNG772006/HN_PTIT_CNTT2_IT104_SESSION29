@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 interface Student {
-  id: number;
+  id: string;
   student_name: string;
   email: string;
   address: string;
@@ -16,12 +16,12 @@ export default function GetStudentId() {
   }, []);
 
   function getStudentID(id :number ) {
-    fetch(`http://localhost:3001/students/${id}`)
+    fetch(`http://localhost:3001/students/${Number(id)}`)
       .then((res) => res.json())
       .then((data) => {
         setStudent(data);
       })
-      .catch((err) => console.error("Lỗi khi lấy sản phẩm:", err));
+      .catch((err) => console.error("Lỗi khi lấy student:", err));
   }
   if (!student) {
     return <div>Không tìm thấy student</div>
