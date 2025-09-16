@@ -16,7 +16,7 @@ export default function GetStudentId() {
   }, []);
 
   function getStudentID(id :number ) {
-    fetch(`http://localhost:3001/students/${Number(id)}`)
+    fetch(`http://localhost:3002/students/${Number(id)}`)
       .then((res) => res.json())
       .then((data) => {
         setStudent(data);

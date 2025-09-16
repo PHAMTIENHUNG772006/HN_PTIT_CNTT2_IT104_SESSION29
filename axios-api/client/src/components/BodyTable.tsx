@@ -1,57 +1,30 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import type { Student } from "./Layout";
 
-interface Student {
-  id: number;
-  student_name: string;
-  email: string;
-  address: string;
-  phone: string;
-  status: boolean;
-  created_at: string;
+interface BodyProps {
+  students: Student[];
+  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
+  deleteStudent: (id: number) => Promise<void>;
 }
 
-export default function BodyTable() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [isOk, setIsOk] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+export default function BodyTable({ students, setStudents, deleteStudent }: BodyProps) {
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
+  const handleDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: "Bạn chắc chắn muốn xoá?",
+      text: "Hành động này không thể hoàn tác!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Vâng, xoá đi!",
+    });
 
-  const fetchStudents = () => {
-    fetch("http://localhost:3001/students")
-      .then((res) => res.json())
-      .then((data) => setStudents(data))
-      .catch((err) => console.error("Lỗi khi lấy dữ liệu sinh viên:", err));
-  };
-
-  function handleDelete(id: number) {
-    setSelectedId(id); 
-    setIsOk(true);   
-  }
-
-  async function handleOk() {
-    if (selectedId !== null) {
-      try {
-        await axios.delete(`http://localhost:3001/students/${selectedId}`);
-        fetchStudents(); 
-      } catch (error) {
-        console.error("Lỗi khi xoá:", error);
-      }
+    if (result.isConfirmed) {
+      await deleteStudent(id);
+      Swal.fire("Đã xoá!", "Sinh viên đã được xoá.", "success");
     }
-    setIsOk(false);  
-    setSelectedId(null);
-  }
-
-  function handleCancel() {
-    setIsOk(false);
-    setSelectedId(null);
-  }
-
-
-  const selectedStudent = students.find((s) => s.id === selectedId);
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -122,32 +95,6 @@ export default function BodyTable() {
           ))}
         </tbody>
       </table>
-
-      {isOk && (
-        <div id="deleteModal" className="modal" style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)",
-          display: "flex", alignItems: "center", justifyContent: "center"
-        }}>
-          <div className="modal-content" style={{
-            background: "#fff", borderRadius: "8px", width: "400px", padding: "20px"
-          }}>
-            <div className="modal-header" style={{ marginBottom: "10px" }}>
-              <h2>Xoá sinh viên</h2>
-              <span className="close" style={{ cursor: "pointer" }} onClick={handleCancel}>&times;</span>
-            </div>
-            <div className="modal-body" style={{ marginBottom: "20px" }}>
-              <p>
-                Bạn chắc chắn muốn xoá sinh viên{" "}
-                <b>{selectedStudent?.student_name}</b>?
-              </p>
-            </div>
-            <div className="modal-footer" style={{ textAlign: "right" }}>
-              <button onClick={handleCancel} style={{ marginRight: "8px" }}>Hủy</button>
-              <button onClick={handleOk} style={{ background: "#ff4d4f", color: "#fff" }}>Xoá</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

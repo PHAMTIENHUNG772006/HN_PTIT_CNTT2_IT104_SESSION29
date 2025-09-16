@@ -8,7 +8,7 @@ export default function GetAllStudent() {
   }, []);
 
   function getALLStudent() {
-    fetch("http://localhost:3001/students")
+    fetch("http://localhost:3002/students")
       .then((res) => res.json())
       .then((data) => {
         console.log("Danh sách sản phẩm:", data);

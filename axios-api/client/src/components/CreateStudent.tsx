@@ -35,7 +35,7 @@ function CreateStudent() {
 
   useEffect(() => {
     axios
-      .post<Student[]>("http://localhost:3001/students",students)
+      .post<Student[]>("http://localhost:3002/students",students)
       .then(() => {
        console.log("thêm data thành công");
        
